@@ -1,0 +1,33 @@
+{
+  "name": "immobilier",
+  "version": "0.1.0",
+  "private": true,
+  "scripts": {
+    "dev": "vue-cli-service serve",
+    "build": "vue-cli-service build"
+  },
+  "dependencies": {
+    "@tomtom-international/web-sdk-maps": "^6.20.0",
+    "@tomtom-international/web-sdk-services": "^6.20.0",
+    "@types/validator": "^13.7.6",
+    "axios": "^0.27.2",
+    "chart.js": "^3.9.1",
+    "core-js": "^3.8.3",
+    "cors": "^2.8.5",
+    "firebase": "^9.14.0",
+    "fs": "^0.0.1-security",
+    "jsdom": "^20.0.0",
+    "material-symbols": "^0.2.10",
+    "validator": "^13.7.0",
+    "vue": "^3.2.13",
+    "vue-awesome-paginate": "^1.0.5",
+    "vue-chartjs": "^4.1.1",
+    "vue-multi-ref": "^2.0.1",
+    "vue-router": "^4.0.3"
+  },
+  "devDependencies": {
+    "@vue/cli-plugin-babel": "~5.0.0",
+    "@vue/cli-plugin-router": "~5.0.0",
+    "@vue/cli-service": "~5.0.0"
+  }
+}
