@@ -242,7 +242,9 @@ export default {
           array.filter(
             (t) =>
               t[property]?.toDate()?.toLocaleString('en', { month: 'long' }) ===
-              m
+                m &&
+              new Date(t[property]?.toDate()).getFullYear() ===
+                new Date().getFullYear()
           ).length
         );
       });

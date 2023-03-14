@@ -1,9 +1,8 @@
 <template>
   <div id="app"></div>
 </template>
-
 <script>
-import { h, onUpdated, toRefs } from 'vue';
+import { h, toRefs } from 'vue';
 import { Bar } from 'vue-chartjs';
 import {
   Chart as ChartJS,
