@@ -3,8 +3,8 @@
 </template>
 
 <script>
-import { h, onMounted, onUpdated, ref, watchEffect } from 'vue'
-import { Bar } from 'vue-chartjs'
+import { h, onMounted, onUpdated, ref, watchEffect } from 'vue';
+import { Bar } from 'vue-chartjs';
 import {
   Chart as ChartJS,
   Title,
@@ -13,10 +13,16 @@ import {
   BarElement,
   CategoryScale,
   LinearScale,
-} from 'chart.js'
+} from 'chart.js';
 
-ChartJS.register(Title, Tooltip, Legend, BarElement, CategoryScale, LinearScale)
-
+ChartJS.register(
+  Title,
+  Tooltip,
+  Legend,
+  BarElement,
+  CategoryScale,
+  LinearScale
+);
 
 export default {
   name: 'BarChart',
@@ -24,49 +30,49 @@ export default {
   props: {
     chartId: {
       type: String,
-      default: 'bar-chart'
+      default: 'bar-chart',
     },
     datasetIdKey: {
       type: String,
-      default: 'label'
+      default: 'label',
     },
     width: {
       type: Number,
-      default: 500
+      default: 500,
     },
     height: {
       type: Number,
-      default: 500
+      default: 500,
     },
     cssClasses: {
       default: '',
-      type: String
+      type: String,
     },
     styles: {
       type: Object,
-      default: () => {}
+      default: () => {},
     },
     plugins: {
       type: Array,
-      default: () => []
+      default: () => [],
     },
     users: {
       type: Array,
-      default: () => []
+      default: () => [],
     },
     ads: {
       type: Array,
-      default: () => []
+      default: () => [],
     },
-    data:{
+    data: {
       type: Object,
-      default: () => {}
-    }
+      default: () => {},
+    },
   },
   setup(props) {
-    const totalAds = ref(props.data.totalsAds)
-    const online = ref(props.data.online)
-    const solded = ref(props.data.solded)
+    const totalAds = ref(props.data.totalsAds);
+    const online = ref(props.data.online);
+    const solded = ref(props.data.solded);
     const chartData = {
       labels: [
         'January',
@@ -80,26 +86,26 @@ export default {
         'September',
         'October',
         'November',
-        'December'
+        'December',
       ],
       datasets: [
         {
           label: 'total',
           backgroundColor: 'blue',
-          data: totalAds.value
+          data: totalAds.value,
         },
         {
           label: 'online',
           backgroundColor: 'darkgray',
-          data: online.value
+          data: online.value,
         },
         {
           label: 'solded',
           backgroundColor: 'green',
-          data: solded.value
-        }
-      ]
-    }
+          data: solded.value,
+        },
+      ],
+    };
 
     const chartOptions = {
       responsive: true,
@@ -112,16 +118,16 @@ export default {
             max: 2000,
             stepSize: 10,
             reverse: false,
-            beginAtZero: true
-          }
-        }
-      }
-    }
-    onMounted(()=>{
-      totalAds.value = props.data.totalsAds
-      online.value = props.data.online
-      solded.value = props.data.solded
-    })
+            beginAtZero: true,
+          },
+        },
+      },
+    };
+    onMounted(() => {
+      totalAds.value = props.data.totalsAds;
+      online.value = props.data.online;
+      solded.value = props.data.solded;
+    });
 
     return () =>
       h(Bar, {
@@ -132,8 +138,8 @@ export default {
         height: props.height,
         cssClasses: props.cssClasses,
         styles: props.styles,
-        plugins: props.plugins
-      })
-  }
-}
+        plugins: props.plugins,
+      });
+  },
+};
 </script>

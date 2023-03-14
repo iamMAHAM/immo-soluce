@@ -1,22 +1,22 @@
 <template>
   <div class="aks-404-page">
-  <div class="aks-404-page-content">
-    <h1>404</h1>
-    <h3>Page Non Trouvée</h3>
-    <a 
-      class="aks-404-page-btn"
-      @click="$router.push('/')"
-    >
-      ACCUEIL
-    </a>
+    <div class="aks-404-page-content">
+      <h1>404</h1>
+      <h3>Page Non Trouvée</h3>
+      <a
+        class="aks-404-page-btn"
+        @click="$router.push('/')"
+      >
+        ACCUEIL
+      </a>
+    </div>
   </div>
-</div>
 </template>
 
 <script>
 export default {
-  name: 'NotFound'
-}
+  name: 'NotFound',
+};
 </script>
 
 <style scoped>

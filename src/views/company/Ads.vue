@@ -1,6 +1,9 @@
 <template>
-  <Loader v-if="load"/>
-  <table class="userTable" v-else>
+  <Loader v-if="load" />
+  <table
+    class="userTable"
+    v-else
+  >
     <caption>
       <input
         type="search"
@@ -8,12 +11,13 @@
         placeholder="rechercher une annonce dans ..."
         v-model="search"
         @input="filterAds"
-        style="min-width: 35rem; height: ; padding: .5rem; margin: .5rem;"
-      >
+        style="min-width: 35rem; height: ; padding: 0.5rem; margin: 0.5rem"
+      />
       <select
         @change="filterAds"
-        style="cursor: pointer; text-align:center; width: max-content;"
-        v-model="filter">
+        style="cursor: pointer; text-align: center; width: max-content"
+        v-model="filter"
+      >
         <option value="">Toutes les annonces</option>
         <option value="online">en ligne</option>
         <option value="solded">soldé</option>
@@ -24,7 +28,6 @@
       >
         search
       </i>
-
     </caption>
     <thead v-if="ads.length">
       <tr>
@@ -46,9 +49,17 @@
         <Ad :ad="ad" />
       </tr>
     </tbody>
-    <div align="center" v-else>Rien à signaler ici ...</div>
+    <div
+      align="center"
+      v-else
+    >
+      Rien à signaler ici ...
+    </div>
     <tfoot v-if="ads.length">
-      <td colspan="8" class="tablefoot"></td>
+      <td
+        colspan="8"
+        class="tablefoot"
+      ></td>
     </tfoot>
   </table>
 </template>
@@ -61,23 +72,22 @@ export default {
   name: 'Ads',
   components: { Ad, Loader },
   emits: ['filterAds'],
-  data(){
+  data() {
     return {
       filter: '',
-      search: ''
-    }
+      search: '',
+    };
   },
   props: ['ads', 'load'],
-  methods:{
-    filterAds(){
-      this.$emit('filterAds', [this.filter, this.search])
-    }
-  }
-}
+  methods: {
+    filterAds() {
+      this.$emit('filterAds', [this.filter, this.search]);
+    },
+  },
+};
 </script>
 
 <style>
-
 .userTable {
   width: 100%;
   text-align: center;
@@ -92,23 +102,23 @@ caption {
 }
 
 .userTable td {
-  padding: .5rem;
+  padding: 0.5rem;
   background-color: var(--gray);
 }
 
 .userTable th {
   background-color: var(--hovercolor);
   color: var(--white);
-  padding: .5rem;
+  padding: 0.5rem;
 }
 
 .block,
 .view,
 .deleteA {
-  margin: .2rem;
+  margin: 0.2rem;
   cursor: pointer;
   border: none;
-  padding: .3rem .5rem;
+  padding: 0.3rem 0.5rem;
   color: var(--white);
   font-weight: bold;
 }
@@ -121,7 +131,7 @@ caption {
   background-color: var(--red);
 }
 
-.block{
+.block {
   background-color: var(--hovercolor);
   color: var(--gray);
 }
@@ -130,11 +140,10 @@ caption {
   padding: 0;
   border-bottom: 3px solid var(--greenfun);
 }
-
 </style>
 
 <style scoped>
-  img {
+img {
   width: 50px;
   height: 50px;
   border-radius: 50%;

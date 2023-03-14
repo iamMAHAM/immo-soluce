@@ -1,70 +1,98 @@
 <template>
-  <Modal ref="modal"/>
+  <Modal ref="modal" />
   <div class="messages-container">
-      <div class="case">
-        <Loader v-if="load"/>
-      <div class="container" v-else>
+    <div class="case">
+      <Loader v-if="load" />
+      <div
+        class="container"
+        v-else
+      >
         <div class="left">
           <div class="top">
             <div class="tub">
               <div class="username">
-                <img :src="auth?.currentUser?.photoURL" width="3rem" height="3rem" ref="img"/>
+                <img
+                  :src="auth?.currentUser?.photoURL"
+                  width="3rem"
+                  height="3rem"
+                  ref="img"
+                />
                 <span>{{ auth?.currentUser?.displayName }}</span>
               </div>
             </div>
           </div>
           <div class="conversations">
             <div
-                v-if="!load && !conversations.length"
-                class="notFound"
+              v-if="!load && !conversations.length"
+              class="notFound"
             >
               <i class="material-symbols-outlined">filter_none</i>
               Aucune Conversation
             </div>
             <Person
               v-else
-              v-for="conversation in conversations" :key="conversation.id"
+              v-for="conversation in conversations"
+              :key="conversation.id"
               :person="conversation.info"
               :messages="conversation.messages.sort(compare)"
               @switch="switchMessages"
             />
           </div>
         </div>
-        <div class="right" v-if="conversations.length">
-          <div class="top" v-if="pers">
+        <div
+          class="right"
+          v-if="conversations.length"
+        >
+          <div
+            class="top"
+            v-if="pers"
+          >
             <div class="box">
               <div class="image">
-                <img :src="pers?.avatar" class="imgLog e"/>
+                <img
+                  :src="pers?.avatar"
+                  class="imgLog e"
+                />
               </div>
               <!-- <div class="online"></div> -->
             </div>
             <div class="information">
               <div class="username">
                 <a href="#">
-                  {{ pers?.fullName}}
+                  {{ pers?.fullName }}
                   <i
                     class="material-symbols-outlined verified"
                     title="compte verifié"
-                      v-if="pers?.isVerified"
-                    >
-                      verified
+                    v-if="pers?.isVerified"
+                  >
+                    verified
                   </i>
                 </a>
               </div>
               <!-- <div class="name">Active now</div> -->
               <div class="name">{{ pers?.role }}</div>
             </div>
-            <div class="options">
-            </div>
+            <div class="options"></div>
           </div>
-          <div v-else class="top">selectionnez une conversation</div>
+          <div
+            v-else
+            class="top"
+          >
+            selectionnez une conversation
+          </div>
           <div class="middle">
             <div class="tumbler">
-              <div class="messages" ref="messages">
+              <div
+                class="messages"
+                ref="messages"
+              >
                 <div
-                  v-for="message in messages" :key="message.id"
+                  v-for="message in messages"
+                  :key="message.id"
                   :id="message?.id"
-                  :class="message?.senderId === uid ? ' clip sent' : 'clip received'"
+                  :class="
+                    message?.senderId === uid ? ' clip sent' : 'clip received'
+                  "
                 >
                   <i
                     class="material-symbols-outlined delete"
@@ -78,18 +106,29 @@
                     class="text"
                   >
                     {{ message?.message.content }}
-                    <router-link v-if="message?.message?.link.startsWith('/details')" :to="message.message.link" class="link">voir le lien</router-link>
-                    <span class="date">{{ readableDate(message.timestamp) }}</span>
+                    <router-link
+                      v-if="message?.message?.link.startsWith('/details')"
+                      :to="message.message.link"
+                      class="link"
+                      >voir le lien</router-link
+                    >
+                    <span class="date">{{
+                      readableDate(message.timestamp)
+                    }}</span>
                   </div>
-                  <img v-else
+                  <img
+                    v-else
                     class="text"
                     :src="message?.message?.content"
-                  >
+                  />
                 </div>
               </div>
             </div>
           </div>
-          <div class="bottom" v-if="pers">
+          <div
+            class="bottom"
+            v-if="pers"
+          >
             <div class="cup">
               <div class="picker">
                 <i
@@ -122,7 +161,7 @@
                 ref="send"
                 @click="sendMessages"
               >
-                  <i class="material-symbols-outlined">send</i>
+                <i class="material-symbols-outlined">send</i>
               </button>
               <div class="picker photo">
                 <input
@@ -130,10 +169,13 @@
                   type="file"
                   accept=".png, .jpeg, .svg"
                   id="photof"
-                  style="display: none;"
+                  style="display: none"
                   ref="tof"
+                />
+                <label
+                  for="photof"
+                  style="cursor: pointer"
                 >
-                <label for="photof" style="cursor: pointer;">
                   <i class="material-symbols-outlined">imagesmode</i>
                 </label>
               </div>
@@ -145,42 +187,47 @@
   </div>
 </template>
 <script>
-import Person from '@/components/partials/Person.vue'
-import Emojis from "@/components/partials/Emojis.vue"
-import { rtdb } from "@/lib/firebaseConfig"
-import {  auth, deleteMessage, sendMessage, uploadImage } from '@/lib/firestoreLib'
-import { onValue, ref as dbref, query as dbquery } from "firebase/database"
-import Loader from '@/components/partials/Loader.vue'
-import Modal from '@/components/partials/Modal.vue'
-const compare = ( a, b )=>{
-  if ( a.timestamp < b.timestamp ){
+import Person from '@/components/partials/Person.vue';
+import Emojis from '@/components/partials/Emojis.vue';
+import { rtdb } from '@/lib/firebaseConfig';
+import {
+  auth,
+  deleteMessage,
+  sendMessage,
+  uploadImage,
+} from '@/lib/firestoreLib';
+import { onValue, ref as dbref, query as dbquery } from 'firebase/database';
+import Loader from '@/components/partials/Loader.vue';
+import Modal from '@/components/partials/Modal.vue';
+const compare = (a, b) => {
+  if (a.timestamp < b.timestamp) {
     return -1;
   }
-  if ( a.timestamp > b.timestamp ){
+  if (a.timestamp > b.timestamp) {
     return 1;
   }
   return 0;
-}
+};
 
-const waitForElm = (selector)=>{
-    return new Promise(resolve => {
-        if (document.querySelector(selector)) {
-            return resolve(document.querySelector(selector));
-        }
-        const observer = new MutationObserver(mutations => {
-            if (document.querySelector(selector)) {
-                resolve(document.querySelector(selector));
-                observer.disconnect();
-            }
-        });
-        observer.observe(document.body, {
-            childList: true,
-            subtree: true
-        });
+const waitForElm = (selector) => {
+  return new Promise((resolve) => {
+    if (document.querySelector(selector)) {
+      return resolve(document.querySelector(selector));
+    }
+    const observer = new MutationObserver((mutations) => {
+      if (document.querySelector(selector)) {
+        resolve(document.querySelector(selector));
+        observer.disconnect();
+      }
     });
-}
+    observer.observe(document.body, {
+      childList: true,
+      subtree: true,
+    });
+  });
+};
 
-const urlRegex = /\bhttps?:\/\/\S+/gi
+const urlRegex = /\bhttps?:\/\/\S+/gi;
 
 export default {
   name: 'Messages',
@@ -188,13 +235,13 @@ export default {
     Person,
     Emojis,
     Loader,
-    Modal
+    Modal,
   },
   props: ['searchData', 'isLogged'],
-  data(){
+  data() {
     return {
-      messages:[],
-      conversations:[],
+      messages: [],
+      conversations: [],
       message: '',
       show: false,
       load: true,
@@ -202,136 +249,151 @@ export default {
       pers: null,
       compare: compare,
       auth: auth,
-      link: ''
-    }
+      link: '',
+    };
   },
-  methods:{
-    linkOrNot(message){
-      const res = message.match(urlRegex)
-      return res ? res[0] : null
+  methods: {
+    linkOrNot(message) {
+      const res = message.match(urlRegex);
+      return res ? res[0] : null;
     },
-    toggle(){
-      document.querySelector(".emoji_picker").classList.toggle("active")
+    toggle() {
+      document.querySelector('.emoji_picker').classList.toggle('active');
     },
-    addEmoji(emoji){
-      this.message+= emoji
+    addEmoji(emoji) {
+      this.message += emoji;
     },
-    readableDate(timestamp){
-      const hours = new Date(timestamp).toLocaleString().replace("à", '').trim().split(" ")
-      var isSafari = /^((?!chrome|android).)*safari/i.test(navigator.userAgent)
-      return isSafari ? hours[2] : hours[1]
+    readableDate(timestamp) {
+      const hours = new Date(timestamp)
+        .toLocaleString()
+        .replace('à', '')
+        .trim()
+        .split(' ');
+      var isSafari = /^((?!chrome|android).)*safari/i.test(navigator.userAgent);
+      return isSafari ? hours[2] : hours[1];
     },
-    dropMessage(){
-      const textarea = this.$refs.textarea
-      const scrollHeight = textarea.scrollHeight
-      this.show = this.message.trim().length > 0
-      textarea.style.height = scrollHeight + 'px'
+    dropMessage() {
+      const textarea = this.$refs.textarea;
+      const scrollHeight = textarea.scrollHeight;
+      this.show = this.message.trim().length > 0;
+      textarea.style.height = scrollHeight + 'px';
     },
-    async sendMessages(e){
-      await new Promise(async r=>{
-        let type = null, content = null
-        if (e.target === this.$refs.tof){
-          const url = await uploadImage(`images/messages/${auth?.currentUser?.uid}/${e.target.files[0].name}`, e.target.files[0])
-          type = 'image'
-          content = url
-        }else{
-          type = 'text'
-          content = this.message.trim()
+    async sendMessages(e) {
+      await new Promise(async (r) => {
+        let type = null,
+          content = null;
+        if (e.target === this.$refs.tof) {
+          const url = await uploadImage(
+            `images/messages/${auth?.currentUser?.uid}/${e.target.files[0].name}`,
+            e.target.files[0]
+          );
+          type = 'image';
+          content = url;
+        } else {
+          type = 'text';
+          content = this.message.trim();
         }
-        r([type, content])
-      }).then(([type, content])=>{
-        if (!((e.key==='Enter' || e.target.textContent === 'send' || e.target === this.$refs.tof) 
-        && content.length > 0)) return
-        const hasUrl = this.message.match(urlRegex)
-        const link =  hasUrl ? hasUrl[0] : null
-        const a = document.createElement("a")
-        a.href = link
-        sendMessage(this.uid, this.pers.id,{
-          message:{
+        r([type, content]);
+      }).then(([type, content]) => {
+        if (
+          !(
+            (e.key === 'Enter' ||
+              e.target.textContent === 'send' ||
+              e.target === this.$refs.tof) &&
+            content.length > 0
+          )
+        )
+          return;
+        const hasUrl = this.message.match(urlRegex);
+        const link = hasUrl ? hasUrl[0] : null;
+        const a = document.createElement('a');
+        a.href = link;
+        sendMessage(this.uid, this.pers.id, {
+          message: {
             type: type,
             content: content.replace(link, ''),
-            link: a.pathname
-          }
-        }).then((message)=>{
-          this.message = ''
-          this.$refs.textarea.style.height = '16px'
-        }
-        ).catch(e=>{
-          this.$refs.modal.show({
-            type: 'error',
-            title: 'Erreur',
-            display: false,
-            errorMessage: e?.code ? e?.code : e?.message,
-          })
+            link: a.pathname,
+          },
         })
-      })
+          .then((message) => {
+            this.message = '';
+            this.$refs.textarea.style.height = '16px';
+          })
+          .catch((e) => {
+            this.$refs.modal.show({
+              type: 'error',
+              title: 'Erreur',
+              display: false,
+              errorMessage: e?.code ? e?.code : e?.message,
+            });
+          });
+      });
     },
-  deleteMessages(e){
-    const message = e.target.parentElement
-    deleteMessage(this.uid, this.pers.id, message.id)
+    deleteMessages(e) {
+      const message = e.target.parentElement;
+      deleteMessage(this.uid, this.pers.id, message.id);
+    },
+    switchMessages([cMessages, person]) {
+      this.messages = cMessages;
+      this.pers = person;
+    },
   },
-  switchMessages([cMessages, person]){
-    this.messages = cMessages
-    this.pers = person
-  }
+  beforeMount() {
+    if (!auth?.currentUser) this.$router.push('/auth');
   },
-  beforeMount(){
-    if (!auth?.currentUser) this.$router.push("/auth")
-  },
-  async mounted(){
-    Object.filter = (obj, predicate) => 
-    Object.keys(obj)
-          .filter( key => predicate(obj[key]) )
-          .reduce( (res, key) => (res[key] = obj[key], res), {}
-    );
-    this.uid = auth?.currentUser?.uid
+  async mounted() {
+    Object.filter = (obj, predicate) =>
+      Object.keys(obj)
+        .filter((key) => predicate(obj[key]))
+        .reduce((res, key) => ((res[key] = obj[key]), res), {});
+    this.uid = auth?.currentUser?.uid;
     const conversations = dbref(rtdb, `messages/${auth?.currentUser?.uid}`);
-    const q = dbquery(conversations)
+    const q = dbquery(conversations);
     onValue(q, async (snapshot) => {
-      const inter = []
+      const inter = [];
       const data = snapshot.val();
-      
-      await new Promise((r=>{
-        if (data){
-          for (const [k, v] of Object.entries(data)){
-            const filtered = Object.filter(v, v=> !v.hasOwnProperty("fullName"))
-            const messages = []
-            for (const [kc, vc] of Object.entries(filtered)){
-              messages.push(vc)
+
+      await new Promise((r) => {
+        if (data) {
+          for (const [k, v] of Object.entries(data)) {
+            const filtered = Object.filter(
+              v,
+              (v) => !v.hasOwnProperty('fullName')
+            );
+            const messages = [];
+            for (const [kc, vc] of Object.entries(filtered)) {
+              messages.push(vc);
             }
             inter.push({
               info: v.info,
-              messages: messages
-            })
+              messages: messages,
+            });
           }
         }
-        r(inter)
-      })).then(inter=>{
-        this.conversations = inter
-        this.load = false
-        const ab = inter.filter(c => c?.info?.id === this.pers?.id)
-        this.messages = ab[0]?.messages.sort(compare)
-      })
-    }
-    )
-    if (this.$route.query.id){
-      const id = this.$route.query.id
-      const message = this.$route.query.template
-      this.message = JSON.parse(message)?.message?.content
-      const conversation = await waitForElm(`#user-${id}`)
-      conversation.click()
-      const textarea = await waitForElm("textarea")
-      textarea.style.height = "100px"
-      this.$router.replace("/messages")
+        r(inter);
+      }).then((inter) => {
+        this.conversations = inter;
+        this.load = false;
+        const ab = inter.filter((c) => c?.info?.id === this.pers?.id);
+        this.messages = ab[0]?.messages.sort(compare);
+      });
+    });
+    if (this.$route.query.id) {
+      const id = this.$route.query.id;
+      const message = this.$route.query.template;
+      this.message = JSON.parse(message)?.message?.content;
+      const conversation = await waitForElm(`#user-${id}`);
+      conversation.click();
+      const textarea = await waitForElm('textarea');
+      textarea.style.height = '100px';
+      this.$router.replace('/messages');
     }
   },
-
-}
+};
 </script>
 
 <style>
-
-.messages-container{
+.messages-container {
   height: 100vh;
 }
 .navigation {
@@ -398,10 +460,10 @@ img {
   text-overflow: ellipsis;
   display: flex;
   align-items: center;
-  gap: .5rem;
+  gap: 0.5rem;
 }
 
-.left > .top > .tub > .username img{
+.left > .top > .tub > .username img {
   width: 50px;
   height: 50px;
   border-radius: 50%;
@@ -419,7 +481,7 @@ img {
 .left > .top > .card > button {
   background-color: #ffffff;
   border: 0.5rem solid #76767637;
-  padding: .4rem .8rem;
+  padding: 0.4rem 0.8rem;
   color: #323232;
   font-weight: 700;
   font-size: 1.2rem;
@@ -451,11 +513,10 @@ img {
 }
 
 .conversations > .person > .information {
-  
   font-size: 1.4rem;
   display: flex;
   flex-direction: column;
-  gap: .4rem;
+  gap: 0.4rem;
   width: 100%;
   overflow: hidden;
   user-select: none;
@@ -464,13 +525,12 @@ img {
 }
 
 .conversations > .person > .information > .username {
-  
   font-size: 1.4rem;
   display: flex;
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
-  gap: .4rem;
+  gap: 0.4rem;
   width: 100%;
   align-items: center;
 }
@@ -478,7 +538,7 @@ img {
 .conversations > .person > .information > .content {
   display: flex;
   align-items: center;
-  gap: .5rem;
+  gap: 0.5rem;
   width: 100%;
   color: black;
 }
@@ -490,7 +550,7 @@ img {
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
-  font-family: "Roboto";
+  font-family: 'Roboto';
   color: #000000;
 }
 
@@ -499,7 +559,7 @@ img {
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
-  font-family: "Roboto";
+  font-family: 'Roboto';
   color: black;
   font-weight: 700;
 }
@@ -527,7 +587,7 @@ img {
   background-color: lawngreen;
   border-radius: 100%;
   position: absolute;
-  border: .3rem solid white;
+  border: 0.3rem solid white;
   right: 0;
   bottom: 0;
 }
@@ -540,8 +600,8 @@ img {
 }
 
 .conversations > .person > .status > .point {
-  min-height: .8rem;
-  min-width: .8rem;
+  min-height: 0.8rem;
+  min-width: 0.8rem;
   background-color: var(--green);
   border-radius: 100%;
 }
@@ -611,7 +671,6 @@ img {
   text-overflow: ellipsis;
   white-space: nowrap;
   font-size: 1.4rem;
-  
 }
 .right > .top .information > .username {
   font-weight: 400;
@@ -682,7 +741,7 @@ img {
   font-size: 1.4rem;
   font-weight: 400;
   max-width: 65%;
-  padding: .8rem 16px;
+  padding: 0.8rem 16px;
   border-radius: 2rem;
   word-break: keep-all;
   white-space: pre-wrap;
@@ -695,7 +754,7 @@ img {
 }
 
 .sent > .text {
-  margin: .3rem;
+  margin: 0.3rem;
   background-color: var(--green);
   color: var(--navcolor);
 }
@@ -707,7 +766,7 @@ img {
 .seen {
   text-align: right;
   padding: 0 1rem;
-  
+
   font-size: 0.75rem;
   font-weight: 400;
   color: gray;
@@ -752,7 +811,7 @@ img {
   font-weight: 400;
   border: none;
   outline: none;
-  padding: 0 .5rem;
+  padding: 0 0.5rem;
   width: 100%;
   resize: none;
   max-height: 100px;
@@ -761,7 +820,7 @@ img {
 .cup > .send {
   cursor: pointer;
   border: none;
-  padding: .5rem 1rem;
+  padding: 0.5rem 1rem;
   background-color: transparent;
   font-size: 1.4rem;
   font-weight: 900;
@@ -772,41 +831,41 @@ img {
   color: #0084ff8d;
 }
 
-.img-sent{
+.img-sent {
   width: 100%;
 }
 
-.delete{
+.delete {
   font-size: 1.3rem !important;
   cursor: pointer;
   color: red;
   font-weight: 200;
   position: absolute;
-  top: .5rem;
+  top: 0.5rem;
   z-index: 2;
   transform: translateY(-50%);
-  right: .1rem;
+  right: 0.1rem;
 }
 
-.date{
+.date {
   font-weight: 500;
   text-align: center;
-  font-size: .6rem;
+  font-size: 0.6rem;
   position: absolute;
   bottom: 0;
   left: 50%;
   transform: translate(-50%);
 }
 
-.time{
+.time {
   font-size: 1rem;
 }
 /* .left{
   border-right: .1rem solid rgba(0, 0, 0, .2);
 } */
 
-.top{
-  border-bottom: .1rem solid rgba(0, 0, 0, .2);
+.top {
+  border-bottom: 0.1rem solid rgba(0, 0, 0, 0.2);
 }
 
 @media only screen and (max-width: 1100px) {
@@ -817,44 +876,44 @@ img {
   }
 }
 
-@media only screen and (max-width: 770px){
+@media only screen and (max-width: 770px) {
   .case .container {
     width: 98%;
   }
-  .left{
+  .left {
     min-width: 20rem;
   }
 }
 
-@media only screen and (max-width: 505px){
-  .left{
+@media only screen and (max-width: 505px) {
+  .left {
     max-width: 8rem;
     min-width: 5rem;
   }
 }
 
-.notFound{
+.notFound {
   justify-content: center;
   display: flex;
   flex-direction: row;
   align-items: center;
-  gap: .5rem;
+  gap: 0.5rem;
 }
 
-.verified{
+.verified {
   color: var(--greenfun);
   font-size: 2rem !important;
 }
 
-.show-emoji{
+.show-emoji {
   display: none !important;
 }
 
-.show-emoji.active{
+.show-emoji.active {
   display: block !important;
 }
 
-.link{
+.link {
   text-decoration: underline;
   color: var(--hovercolor);
   display: block;
@@ -862,7 +921,7 @@ img {
   position: relative;
 }
 
-.link:hover{
+.link:hover {
   color: var(--red);
 }
 </style>

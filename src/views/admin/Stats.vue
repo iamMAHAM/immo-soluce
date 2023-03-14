@@ -3,8 +3,8 @@
 </template>
 
 <script>
-import { h, onUpdated, toRefs } from 'vue'
-import { Bar } from 'vue-chartjs'
+import { h, onUpdated, toRefs } from 'vue';
+import { Bar } from 'vue-chartjs';
 import {
   Chart as ChartJS,
   Title,
@@ -13,10 +13,16 @@ import {
   BarElement,
   CategoryScale,
   LinearScale,
-} from 'chart.js'
+} from 'chart.js';
 
-ChartJS.register(Title, Tooltip, Legend, BarElement, CategoryScale, LinearScale)
-
+ChartJS.register(
+  Title,
+  Tooltip,
+  Legend,
+  BarElement,
+  CategoryScale,
+  LinearScale
+);
 
 export default {
   name: 'BarChart',
@@ -24,47 +30,47 @@ export default {
   props: {
     chartId: {
       type: String,
-      default: 'bar-chart'
+      default: 'bar-chart',
     },
     datasetIdKey: {
       type: String,
-      default: 'label'
+      default: 'label',
     },
     width: {
       type: Number,
-      default: 500
+      default: 500,
     },
     height: {
       type: Number,
-      default: 500
+      default: 500,
     },
     cssClasses: {
       default: '',
-      type: String
+      type: String,
     },
     styles: {
       type: Object,
-      default: () => {}
+      default: () => {},
     },
     plugins: {
       type: Array,
-      default: () => []
+      default: () => [],
     },
     users: {
       type: Array,
-      default: () => []
+      default: () => [],
     },
     ads: {
       type: Array,
-      default: () => []
+      default: () => [],
     },
-    data:{
+    data: {
       type: Object,
-      default: () => {}
-    }
+      default: () => {},
+    },
   },
   setup(props) {
-    const { data } = toRefs(props)
+    const { data } = toRefs(props);
     const chartData = {
       labels: [
         'January',
@@ -78,26 +84,26 @@ export default {
         'September',
         'October',
         'November',
-        'December'
+        'December',
       ],
       datasets: [
         {
           label: 'Users',
           backgroundColor: 'blue',
-          data: data.value.users
+          data: data.value.users,
         },
         {
           label: 'Ads',
           backgroundColor: 'darkgray',
-          data: data.value.totalAds
+          data: data.value.totalAds,
         },
         {
           label: 'Solded Ads',
           backgroundColor: 'green',
-          data: data.value.soldedAds
-        }
-      ]
-    }
+          data: data.value.soldedAds,
+        },
+      ],
+    };
 
     const chartOptions = {
       responsive: true,
@@ -110,11 +116,11 @@ export default {
             max: 2000,
             stepSize: 10,
             reverse: false,
-            beginAtZero: true
-          }
-        }
-      }
-    }
+            beginAtZero: true,
+          },
+        },
+      },
+    };
 
     return () =>
       h(Bar, {
@@ -126,7 +132,7 @@ export default {
         cssClasses: props.cssClasses,
         styles: props.styles,
         plugins: props.plugins,
-      })
-  }
-}
+      });
+  },
+};
 </script>

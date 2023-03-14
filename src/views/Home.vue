@@ -1,32 +1,48 @@
 <template>
-  <div class="home-component" style="min-height: 100vh">
-    <Banner @filter="filter" :match="match"/>
-    <Categories class="sidebrleft" @filter="filter"/>
+  <div
+    class="home-component"
+    style="min-height: 100vh"
+  >
+    <Banner
+      @filter="filter"
+      :match="match"
+    />
+    <Categories
+      class="sidebrleft"
+      @filter="filter"
+    />
     <CardContainer
       :cards="cards"
       :load="load"
       :message="message"
       :searchTerm="searchTerm"
       :isSearch="isSearch"
-      />
+    />
   </div>
 </template>
 
 <script>
 import Banner from '@/components/Banner.vue';
 import CardContainer from '@/components/CardContainer.vue';
-import { allCategories, find, save, saveOne, searchLow, setOne } from '@/lib/firestoreLib';
-import Categories from '@/components/partials/banner/Categories.vue'
+import {
+  allCategories,
+  find,
+  save,
+  saveOne,
+  searchLow,
+  setOne,
+} from '@/lib/firestoreLib';
+import Categories from '@/components/partials/banner/Categories.vue';
 
 export default {
   name: 'Home',
   props: ['isLogged', 'searchData'],
   components: {
-      Banner,
-      CardContainer,
-      Categories
+    Banner,
+    CardContainer,
+    Categories,
   },
-  data(){
+  data() {
     return {
       load: true,
       allCards: [],
@@ -35,70 +51,72 @@ export default {
       message: '',
       searchTerm: '',
       isSearch: false,
-    }
+    };
   },
-  methods:{
-    filter(type){
-      this.cards = this.allCards.filter(c=> c.proposition.includes(type))
+  methods: {
+    filter(type) {
+      this.cards = this.allCards.filter((c) => c.proposition.includes(type));
     },
 
-    flagger(){
-      const categories = document?.querySelector('.sidebrleft')
-      const scrollY = ()=>{ return window.scrollY }
-      if(scrollY() > 766){
-          categories?.classList?.add('blockq')
-        }else{
-          categories?.classList?.remove('blockq')
-        }
-    }
+    flagger() {
+      const categories = document?.querySelector('.sidebrleft');
+      const scrollY = () => {
+        return window.scrollY;
+      };
+      if (scrollY() > 766) {
+        categories?.classList?.add('blockq');
+      } else {
+        categories?.classList?.remove('blockq');
+      }
+    },
   },
-  beforeMount(){
-    allCategories.includes(this.$route.path.replace("/", '').trim())
-    ? ''
-    : this.$router.push('/404')
+  beforeMount() {
+    allCategories.includes(this.$route.path.replace('/', '').trim())
+      ? ''
+      : this.$router.push('/404');
   },
-  mounted(){
-    this.match = window.matchMedia("(max-width: 800px)").matches
+  mounted() {
+    this.match = window.matchMedia('(max-width: 800px)').matches;
     const ids = [
       'zsHm67Xam6bfrPNUbPCRkHGJZz33',
       'Gqbz54cIVxVeDpl483hMZMgnhqC2',
-      'mjWboYwJ5ySSkmnkHmvkdUogMy02'
-    ]
+      'mjWboYwJ5ySSkmnkHmvkdUogMy02',
+    ];
     find(`ads/X1eA1Bk8tfnVXHqduiTg${this.$route.path}`)
-    .then(data=>{
-      const pros = data.filter(d => d.isPro)
-      this.cards = [...pros, ...data.filter(d => !d.isPro)]
-      this.allCards = [...this.cards]
-      this.load = false
-      this.message = 'Rien dans cette section'
-    })
-    .then(()=>{
-      window.addEventListener("scroll", this.flagger)
-    })
-  },
-  unmounted(){
-    window.removeEventListener('scroll', this.flagger)
-  },
-  watch:{
-    searchData (value){
-      const [categorie, searchTerm ] = value
-      this.load = true
-      this.searchTerm = searchTerm
-      searchLow(categorie, searchTerm)
-      .then(datas=>{
-        this.isSearch = true
-        this.cards = [...datas]
-        this.message = this.cards.length ? 'Rien dans cette section' : 'Aucun resultat correspondant'
-        this.load = false
+      .then((data) => {
+        const pros = data.filter((d) => d.isPro);
+        this.cards = [...pros, ...data.filter((d) => !d.isPro)];
+        this.allCards = [...this.cards];
+        this.load = false;
+        this.message = 'Rien dans cette section';
       })
-    }
-  }
-
-}
+      .then(() => {
+        window.addEventListener('scroll', this.flagger);
+      });
+  },
+  unmounted() {
+    window.removeEventListener('scroll', this.flagger);
+  },
+  watch: {
+    searchData(value) {
+      const [categorie, searchTerm] = value;
+      this.load = true;
+      this.searchTerm = searchTerm;
+      searchLow(categorie, searchTerm).then((datas) => {
+        this.isSearch = true;
+        this.cards = [...datas];
+        this.message = this.cards.length
+          ? 'Rien dans cette section'
+          : 'Aucun resultat correspondant';
+        this.load = false;
+      });
+    },
+  },
+};
 </script>
 
 <style>
-.sidebrleft{
+.sidebrleft {
   position: fixed;
   left: 1rem;
   top: 50%;
@@ -107,7 +125,7 @@ export default {
   height: max-content;
 }
 
-.sidebrleft.blockq{
+.sidebrleft.blockq {
   z-index: 22;
   display: block;
 }
@@ -116,15 +134,15 @@ export default {
   width: 5.5rem;
 }
 
-.sidebrleft > nav{
+.sidebrleft > nav {
   flex: 0;
 }
 
-.sidebrleft .nav-title{
+.sidebrleft .nav-title {
   display: none;
 }
 
-.sidebrleft .nav-toggle{
+.sidebrleft .nav-toggle {
   display: none;
 }
 </style>
