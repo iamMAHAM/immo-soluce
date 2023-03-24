@@ -118,6 +118,14 @@
             </div>
           </div>
           <div class="bottom">
+            <select
+              class="select"
+              v-model="year"
+              @change="handleYearChange"
+            >
+              <option :value="2022">2022</option>
+              <option :value="2023">2023</option>
+            </select>
             <Stats
               v-if="mounted"
               :data="data"
@@ -242,9 +250,7 @@ export default {
           array.filter(
             (t) =>
               t[property]?.toDate()?.toLocaleString('en', { month: 'long' }) ===
-                m &&
-              new Date(t[property]?.toDate()).getFullYear() ===
-                new Date().getFullYear()
+                m && new Date(t[property]?.toDate()).getFullYear() === this.year
           ).length
         );
       });
@@ -258,6 +264,13 @@ export default {
           u.title?.toLowerCase().includes(search.toLowerCase())
       );
     },
+    handleYearChange() {
+      this.getDataArray(this.totals_ads, 'publishedAt', 'totalAds');
+      const solded = this.totals_ads.filter((a) => a.status === 'solded');
+      this.getDataArray(solded, 'publishedAt', 'soldedAds');
+
+      console.log('new data : ', this.data);
+    },
   },
   data() {
     return {
@@ -270,6 +283,7 @@ export default {
       companies: [],
       data: {},
       ads: [],
+      year: 2023,
       mounted: false,
       isOwner: false,
       signOutUser: signOutUser,
@@ -577,6 +591,15 @@ span.alerte {
   transform: translateX(-20px);
   color: var(--red);
 }
+
+.select {
+  width: 25%;
+  align-self: center;
+  text-align: center;
+  align-content: center;
+  margin-left: 100px;
+}
+
 /* Responsive */
 @media only screen and (max-width: 641px) {
   .avatar,
